@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MadGPT</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #app {
+            text-align: center;
+        }
+        .logo {
+            width: 400px; /* Changed to 4x bigger */
+            height: 400px; /* Changed to 4x bigger */
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(3deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes happyWiggle {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes angryWiggle {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .wiggle {
+            animation: wiggle 2s ease infinite;
+        }
+
+        .happyWiggle {
+            animation: happyWiggle 0.5s;
+        }
+
+        .angryWiggle {
+            animation: angryWiggle 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container py-5">
+        <img id="logo" class="logo mb-3" alt="Logo">
+        <p>I seek sensible reasons for single-GPU passthrough setups.</p>
+        <form id="question-form" class="mb-3">
+            <label class="d-block mb-2">
+                Enter below a valid reason to use single-GPU passthrough and be judged. Harshly.
+                <input id="answer" class="form-control" placeholder="Your answer">
+            </label>
+            <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="explanation" class="alert d-none"></div>
+        <div id="countMsg" class="mt-3"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var logos = ['logo1.png', 'logo2.png', 'logo3.png', 'logo4.png'];
+            var logoElement = document.getElementById('logo');
+            logoElement.src = logos[Math.floor(Math.random() * logos.length)];
+
+            var questionFormElement = document.getElementById('question-form');
+            var answerElement = document.getElementById('answer');
+            var explanationElement = document.getElementById('explanation');
+            var MessageElement = document.getElementById('countMsg');
+            var submitButtonElement = document.getElementById('submit-button');
+
+            questionFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                logoElement.classList.add('wiggle');
+                submitButtonElement.disabled = true; // Disables the submit button
+                submitButtonElement.classList.add('disabled'); // Greys out the submit button
+                var answer = answerElement.value;
+
+                fetch('/backend.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'answer=' + encodeURIComponent(answer)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    logoElement.classList.remove('wiggle');
+                    explanationElement.textContent = data.explanation;
+                    MessageElement.textContent= "This reason has been given "+data.count+" times.";
+                    explanationElement.classList.remove('d-none', 'alert-success', 'alert-danger', 'happyWiggle', 'angryWiggle');
+                    submitButtonElement.disabled = false; // Re-enables the submit button
+                    submitButtonElement.classList.remove('disabled'); // Removes the greying out of the submit button
+                    
+                    if (data.answerIsValid) {
+                        explanationElement.classList.add('alert-success', 'happyWiggle');
+                    } else {
+                        explanationElement.classList.add('alert-danger', 'angryWiggle');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
