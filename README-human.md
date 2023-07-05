@@ -17,3 +17,17 @@ This project is an in-joke for the VFIO community on Discord.
 It is not meant to be taken too seriously.
 Also, the prompt is harsh. While mostly true, it does not necessarily entirely exactly reflect my views, it was made extra harsh in order to make ChatGPT extra mad.
 It worked wonders. Proper MadGPT.
+
+
+If you want to set it up yourself, you need a database with a single table:
+
+```
+CREATE TABLE `answers` (
+  `id` int(11) NOT NULL,
+  `answer` text NOT NULL,
+  `response` text NOT NULL,
+  `count` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+```
+
+You should probably slap an index or 2 on that, I haven't bothered.
