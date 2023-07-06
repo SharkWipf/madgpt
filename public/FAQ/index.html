@@ -8,42 +8,6 @@
         #app {
             text-align: center;
         }
-        .logo {
-            width: 400px; /* Changed to 4x bigger */
-            height: 400px; /* Changed to 4x bigger */
-        }
-
-        @keyframes wiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-3deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(3deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        @keyframes happyWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes angryWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
-        .wiggle {
-            animation: wiggle 2s ease infinite;
-        }
-
-        .happyWiggle {
-            animation: happyWiggle 0.5s;
-        }
-
-        .angryWiggle {
-            animation: angryWiggle 0.5s;
-        }
 
         /* Additional styles for the lightbox */
         .lightbox {
@@ -110,19 +74,51 @@
 </head>
 <body>
     <div id="app" class="container py-5">
-        <h5 id="logoTextElement"></h5>
-        <h4><a href="/FAQ">In-depth debunking FAQ</a> | <a href="/common-issues">Common issues troubleshooting</a></h4>
-        <img id="logo" class="logo mb-3" alt="Logo">
-        <p>I seek sensible reasons for single-GPU passthrough setups.</p>
-        <form id="question-form" class="mb-3">
-            <label class="d-block mb-2">
-                Enter below a valid reason to use single-GPU passthrough and be judged. Harshly.
-                <input id="answer" class="form-control" placeholder="Your answer">
-            </label>
-            <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        <div id="explanation" class="alert d-none"></div>
-        <div id="countMsg" class="mt-3"></div>
+        <h3>In-depth debunking <a href="https://www.youtube.com/watch?v=YUh6OFVdRsA">FAQ</a> (WIP)</h3>
+        <h4><a href="/">Main page</a> | <a href="/common-issues">Common issues troubleshooting</a></h4>
+
+
+        <hr />  <!-- separator -->
+
+        <h4>Doesn't Single-GPU Passthrough let you run Linux and Windows at the same time?</h4>
+        <p>Sure. Linux keeps running while you use Windows. The desktop and everything graphical shuts down though. So unless you're running servers or headless services off of your Linux host, you're effectively still suffering the effects of a full reboot.</p>
+
+        <h4>It's free, why not?</h4>
+        <p>It's not free. You give up performance, you add complexity, you'll be spending a lot of time setting up and maintaining(!) your setup when it inevitably breaks, and you'll likely be placing a burden on support communities as well. On top of that, certain features and software simply don't work in a VM. All that for zero benefit.</p>
+
+        <h4>I don't trust Windows, doesn't this isolate it?</h4>
+        <p>Many users justify single-GPU passthrough with the statement, "<i>I don't trust Windows</i>". The fact is, even if Windows wanted to act maliciously, running it in a VM wouldn't provide any significant protection without further, expert-level hardening. So this argument falls flat.</p>
+
+        <h4>I want to run software I don't trust, why wouldn't I want to use a VM for this?</h4>
+        <p>The claim that "<i>I want to run untrusted software in a VM</i>", expecting it to be a secure environment is a misconception. Running untrusted software in a VM doesn't automatically increase security. In fact, it might enlarge the attack surface and provide a false sense of security. You need many other hardening steps, on top of that, the act of PCI passthrough itself is a huge barely shielded attack vector.</p>
+
+        <h4>I don't want Windows to touch my Linux installation.</h4>
+        <p>The idea that "<i>Windows can't touch my Linux installation</i>" in a single-GPU passthrough setup is incorrect. Windows can't and won't alter your Linux installation, unless you've got someone throwing hand-crafted targetted malware at you. But then again, such malware could also easily break out of a VM.</p>
+
+        <h4>But I don't want to allocate the disk space!</h4>
+        <p>Some believe that running Windows in a VM as "<i>I barely use Windows, I don't want it to take up so much space</i>" would save disk space. This is incorrect. Windows requires the same amount of space whether it's installed natively or in a VM. It's just a matter of planning it out.</p>
+
+        <h4>I once heard that Windows hates Linux and will mess with my bootloader!</h4>
+        <p>The idea that "<i>Windows messes with Linux bootloaders</i>" is false. Modern Windows systems don't change anything related to Linux unless your system is misconfigured, and your EFI boot entries are already incorrect. This might have been different with legacy/bios installations due to limitations of MBR, but those days are long past.</p>
+
+        <h4>I don't want invasive anti-cheat running on my bare hardware...</h4>
+        <p>Understandable. But passthrough isn't gonna help you here. Most anti-cheat software explicitly block VMs, and trying to bypass VM detection will likely result in getting banned from the games you're trying to play.</p>
+
+        <h4>I got banned in a game and I want to ban evade and/or cheat more</h4>
+        <p>As per above, first off most anti-cheat will refuse to run in VMs, explicitly because of people like you. Second, we do not support cheaters, and do not want you here. You've already ruined enough. Go find someone else to help you, or better yet, just stop.</p>
+
+        <h4>Running Windows in a VM is faster than rebooting!</h4>
+        <p>If it didn't shut down your desktop in the process, maybe. Even if it does rarely save you 2 seconds though, any time savings are heavily outweighed by the time spent setting up and fixing your single-GPU passthrough setup.</p>
+
+        <h4>But someone told me it is <i>"The Ultimate Setup"</i>!</h4>
+        <p>A lot of people saw a youtuber make baseless and empty claims about how it somehow "The Ultimate Setup". Unfortunately said youtuber neglected to mention all the downsides, or even any of the things making it "The Ultimate Setup". Despite this lack of information, many people still decided to wipe their precious Windows installs to install Linux so they could run Windows in a VM. If you're one of those people, sorry that happened to you. Your old setup was better. Dual-booting is better. You gained nothing, you only lost.</p>
+
+        <h4>If I don't run Windows in a VM, the 🌸<i>glowies</i>🌸 will get me!</h4>
+        <p>We see a lot of paranoid (the medical definition) people who put a lot of effort into defending against some kind of invisible enemy. 100% of the time, these people do not have an actual threat model (or even know what it is), and just end up implementing whatever sounds safe. 100% of the time, this results in far less secure setups than if they wouldn't have done anything, and on top of that makes them stick out like a sore thumb. If you're one of these people, for your own sake, please, seek professional medical help. Seriously. You're heading down a path you might not be able to recover from. Medical professionals can help you.</p>
+
+        <hr />
+
+        <p>The bottom line is, single-GPU passthrough isn't a magical solution. Most of the time, it doesn't offer any real benefits over a simple dual-boot setup, and only adds downsides. It's essential to understand your actual needs and evaluate if single-GPU passthrough actually meets those needs. If it does, great, but in most cases, it won't, and if you need to come ask for support to indulge your objectively pointless setup, your pointless project is now a burden on the support communities.</p>
     </div>
 
     <!-- Lightbox -->
@@ -156,18 +152,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var logos = ['logo1.png', 'logo2.png', 'logo3.png', 'logo4.png'];
-            var logoTexts = ['SHGIARE PLACK S1G•P SKIIRQ HARK', 'SHARK SHA PHOKANGE', 'SHARK SHRANAC SPAGK PA PHAGE PHI', 'PHARIG GHARK GHIAR'];
-            var logoElement = document.getElementById('logo');
-            logoWinner = Math.floor(Math.random() * logos.length);
-            logoElement.src = logos[logoWinner];
-            logoTextElement.textContent = logoTexts[logoWinner];
-
-            var questionFormElement = document.getElementById('question-form');
-            var answerElement = document.getElementById('answer');
-            var explanationElement = document.getElementById('explanation');
-            var MessageElement = document.getElementById('countMsg');
-            var submitButtonElement = document.getElementById('submit-button');
             var lightboxElement = document.getElementById('lightbox');
             var lightboxCloseElement = document.getElementById('lightbox-close');
             var lightboxReopenElement = document.getElementById('lightbox-reopen');
@@ -188,37 +172,6 @@
             lightboxReopenElement.addEventListener('click', function(e) {
                 e.preventDefault();
                 lightboxElement.style.display = 'flex';
-            });
-
-            questionFormElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                logoElement.classList.add('wiggle');
-                submitButtonElement.disabled = true; // Disables the submit button
-                submitButtonElement.classList.add('disabled'); // Greys out the submit button
-                var answer = answerElement.value;
-
-                fetch('/backend.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'answer=' + encodeURIComponent(answer)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    logoElement.classList.remove('wiggle');
-                    explanationElement.textContent = data.explanation;
-                    MessageElement.textContent= "This reason has been given "+data.count+" times.";
-                    explanationElement.classList.remove('d-none', 'alert-success', 'alert-danger', 'happyWiggle', 'angryWiggle');
-                    submitButtonElement.disabled = false; // Re-enables the submit button
-                    submitButtonElement.classList.remove('disabled'); // Removes the greying out of the submit button
-                    
-                    if (data.answerIsValid) {
-                        explanationElement.classList.add('alert-success', 'happyWiggle');
-                    } else {
-                        explanationElement.classList.add('alert-danger', 'angryWiggle');
-                    }
-                });
             });
         });
     </script>

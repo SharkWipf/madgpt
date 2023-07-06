@@ -8,42 +8,6 @@
         #app {
             text-align: center;
         }
-        .logo {
-            width: 400px; /* Changed to 4x bigger */
-            height: 400px; /* Changed to 4x bigger */
-        }
-
-        @keyframes wiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-3deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(3deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        @keyframes happyWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes angryWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
-        .wiggle {
-            animation: wiggle 2s ease infinite;
-        }
-
-        .happyWiggle {
-            animation: happyWiggle 0.5s;
-        }
-
-        .angryWiggle {
-            animation: angryWiggle 0.5s;
-        }
 
         /* Additional styles for the lightbox */
         .lightbox {
@@ -110,19 +74,64 @@
 </head>
 <body>
     <div id="app" class="container py-5">
-        <h5 id="logoTextElement"></h5>
-        <h4><a href="/FAQ">In-depth debunking FAQ</a> | <a href="/common-issues">Common issues troubleshooting</a></h4>
-        <img id="logo" class="logo mb-3" alt="Logo">
-        <p>I seek sensible reasons for single-GPU passthrough setups.</p>
-        <form id="question-form" class="mb-3">
-            <label class="d-block mb-2">
-                Enter below a valid reason to use single-GPU passthrough and be judged. Harshly.
-                <input id="answer" class="form-control" placeholder="Your answer">
-            </label>
-            <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        <div id="explanation" class="alert d-none"></div>
-        <div id="countMsg" class="mt-3"></div>
+        <h3>Common issues troubleshooting <strong>SINGLE</strong>-GPU passthrough (WIP)</h3>
+        <h4><a href="/">Main page</a> | <a href="/FAQ">In-depth debunking FAQ</a></h4>
+
+        <h4>More extensive page/instructions may follow some other time.</h4>
+        <p>This is just a guideline to ease the massive flood of repetitive questions. <strong>The correct place to seek assistance would be at whatever community wrote the guide you followed</strong> (which is most definitely not the VFIO Discord's community).</p>
+
+        <hr />  <!-- separator -->
+
+        <h4>Desktop shuts down when starting VM</h4>
+        <p>This is expected behavior for single-GPU. In order to give your only GPU to Windows, you first need to shut down everything using it on Linux. The main reason why it's no better than dual booting.</p>
+
+        <h4>Black screen after VM start</h4>
+        <p>Your hooks got launched, but your VM did not start. See the logs, hooks and reset bug sections further downn.</p>
+
+        <h4>VM doesn't get saved in virt-manager</h4>
+        <p>Virt-manager doesn't save a new VM until you shut it down. But you're shutting down virt-manager when you start your VM. Remove your GPU and your hooks, create the VM, then add them back.</p>
+
+        <h4>Desktop doesn't return after VM shutdown</h4>
+        <p>Your GPU likely suffers from a form of reset bug, or wasn't properly empty (no processes using it) when you started the VM, or your desktop start hook did not work. See the logs and hooks sections further down.</p>
+
+        <h4>VM performance is garbage</h4>
+        <p>Most likely, you didn't properly optimize your VM, or copy-pasted from the wrong guides. Refer to the VFIO Discord #wiki-and-psa channel. The most common culprits however are having Hyper-V enabled in the VM, missing Hyper-V Enlightenments in the config, or having hypervisor set to disabled in the config, though we've seen far worse things from some of these single-GPU guides.</p>
+
+        <hr />
+        <hr />
+
+        <h4>This is the hooks section further down</h4>
+        <p>Almost every single-GPU passthrough guide has an incorrect set of hooks that do a lot of stuff they shouldn't. This is easily the most common problem single-GPU people get stuck with.</p>
+        <p>Shutting down your login manager (systemctl stop (sddm|lightdm|kdm|gdm|etc) generally takes care of clearing all references to the GPU, by shutting down all graphical programs.</p>
+        <p>If you're on Nvidia and you have nvidia-drm.modeset=1 (likely), you need to manually unload its kernel modules in the right order too, starting with nvidia-drm</p>
+        <p>On AMD, you might need to manually unload the kernel modules too. AMD is a mixed full of surprise bugs, in some setups it won't ever work without issues at all.</p>
+        <p>A lot of hard (host and guest) crashes and failures and even performance problems can often be attributed to unproper unbinding. If these steps aren't enough to clear the references to the GPU, you'll have to figure out what's using it and how to deal with it on a case-by-case basis.</p>
+
+        <hr />
+
+        <h4>And this is the logs section</h4>
+        <ul>
+            <li>System logs, libvirt logs: journalctl -b</li>
+            <li>Kernel logs: journalctl -k -b or dmesg</li>
+            <li>Last boot's logs: journalctl -b -1, replace -1 with the amount of boots you want to go back. Works for -k too.</li>
+            <li>VM's logs: /var/log/libvirt/qemu/yourvm.log, be aware multiple runs are logged in here.</li>
+            <li>VM's config: virsh dumpxml yourvmname</li>
+        </ul>
+        <p>How to check the logs when your desktop does not work: You set up SSH, and ssh in from another machine. Any machine. Even a smartphone works.</p>
+        <p>Wherever you're going to ask for help, with the exception of maybe a fortune teller discord, you will need to provide your VM config and logs. Have them ready, or better yet, include them in your question (via pastebin or similar, please don't upload them).</p>
+
+        <hr />
+
+        <h4>Reset bug section's me</h4>
+        <p>AMD GPUs suffer, and have for years suffered, from a thing called the reset bug. It exhibits itself differently for different setups, but one way or another, it usually strikes.</p>
+        <p>It can exhibit itself as a GPU just refusing to work if it's been used before, or the GPU being unstable after it's been used before, or it locking up the entire OS when attempting to rebind it, or stuttering, or many other ways.</p>
+        <p>The reset bug triggers when a GPU gets reset. That is, when it's been used before that same boot, and is re-initialized. Needless to say, single-GPU passthrough is the worst-case scenario for the reset bug.</p>
+        <p>On pre-6000 GPUs, there exists a vendor-reset project to help alliviate this bug. On the 6000 series, the effects are usually much less severe, if not entirely unnoticable. If you do suffer from it, there is no fix however.</p>
+        <p>The 7000 series have other issues that need to be fixed before they can be passed through at all, which is out of scope for this page.</p>
+        <p>Always make sure the GPU is properly cleared and de-initialized/unloaded before starting a VM, as not doing so greatly worsens the problem.</p>
+        <p>In the event it isn't properly unloaded, the system/kernel logs would have plenty of errors in them.</p>
+
+        <hr />
     </div>
 
     <!-- Lightbox -->
@@ -156,18 +165,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var logos = ['logo1.png', 'logo2.png', 'logo3.png', 'logo4.png'];
-            var logoTexts = ['SHGIARE PLACK S1G•P SKIIRQ HARK', 'SHARK SHA PHOKANGE', 'SHARK SHRANAC SPAGK PA PHAGE PHI', 'PHARIG GHARK GHIAR'];
-            var logoElement = document.getElementById('logo');
-            logoWinner = Math.floor(Math.random() * logos.length);
-            logoElement.src = logos[logoWinner];
-            logoTextElement.textContent = logoTexts[logoWinner];
-
-            var questionFormElement = document.getElementById('question-form');
-            var answerElement = document.getElementById('answer');
-            var explanationElement = document.getElementById('explanation');
-            var MessageElement = document.getElementById('countMsg');
-            var submitButtonElement = document.getElementById('submit-button');
             var lightboxElement = document.getElementById('lightbox');
             var lightboxCloseElement = document.getElementById('lightbox-close');
             var lightboxReopenElement = document.getElementById('lightbox-reopen');
@@ -188,37 +185,6 @@
             lightboxReopenElement.addEventListener('click', function(e) {
                 e.preventDefault();
                 lightboxElement.style.display = 'flex';
-            });
-
-            questionFormElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                logoElement.classList.add('wiggle');
-                submitButtonElement.disabled = true; // Disables the submit button
-                submitButtonElement.classList.add('disabled'); // Greys out the submit button
-                var answer = answerElement.value;
-
-                fetch('/backend.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'answer=' + encodeURIComponent(answer)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    logoElement.classList.remove('wiggle');
-                    explanationElement.textContent = data.explanation;
-                    MessageElement.textContent= "This reason has been given "+data.count+" times.";
-                    explanationElement.classList.remove('d-none', 'alert-success', 'alert-danger', 'happyWiggle', 'angryWiggle');
-                    submitButtonElement.disabled = false; // Re-enables the submit button
-                    submitButtonElement.classList.remove('disabled'); // Removes the greying out of the submit button
-                    
-                    if (data.answerIsValid) {
-                        explanationElement.classList.add('alert-success', 'happyWiggle');
-                    } else {
-                        explanationElement.classList.add('alert-danger', 'angryWiggle');
-                    }
-                });
             });
         });
     </script>
