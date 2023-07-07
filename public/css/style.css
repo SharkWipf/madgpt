@@ -1,0 +1,104 @@
+#app {
+    text-align: center;
+}
+
+.logo {
+    width: 400px;
+    height: 400px;
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes happyWiggle {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes angryWiggle {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.wiggle {
+    animation: wiggle 2s ease infinite;
+}
+
+.happyWiggle {
+    animation: happyWiggle 0.5s;
+}
+
+.angryWiggle {
+    animation: angryWiggle 0.5s;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 999999;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    transition: display 0.5s ease-in-out;
+}
+
+.lightbox-content {
+    position: relative;
+    background-color: #ffffff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+}
+
+.lightbox-close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.lightbox-close:before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lightbox-close:after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.lightbox-content li {
+    margin-bottom:10px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+.footer a {
+    color: #666;
+    text-decoration: underline;
+    cursor: pointer;
+}

@@ -4,73 +4,7 @@
     <meta charset="UTF-8">
     <title>MadGPT</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        #app {
-            text-align: center;
-        }
-
-        /* Additional styles for the lightbox */
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightbox-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-        }
-
-        .lightbox-close:before, .lightbox-close:after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 3px;
-            background-color: #333;
-        }
-
-        .lightbox-close:before {
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .lightbox-close:after {
-            transform: translate(-50%, -50%) rotate(-45deg);
-        }
-
-        .lightbox-content li {
-            margin-bottom:10px;
-        }
-
-        /* Additional styles for the footer */
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .footer a {
-            color: #666;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="app" class="container py-5">
@@ -121,9 +55,10 @@
         <p>The bottom line is, single-GPU passthrough isn't a magical solution. Most of the time, it doesn't offer any real benefits over a simple dual-boot setup, and only adds downsides. It's essential to understand your actual needs and evaluate if single-GPU passthrough actually meets those needs. If it does, great, but in most cases, it won't, and if you need to come ask for support to indulge your objectively pointless setup, your pointless project is now a burden on the support communities.</p>
     </div>
 
-    <!-- Lightbox -->
+     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
         <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
             <div id="lightbox-main-content">
                 <h4>Hey there, before you click away:</h4>
                 <p>Just a quick heads up on why we (VFIO Discord) might sound a little tired when it comes to supporting single-GPU passthrough. Don't worry, no hard feelings, we just want to let you in on the challenges:</p>
@@ -150,36 +85,12 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var lightboxElement = document.getElementById('lightbox');
-            var lightboxCloseElement = document.getElementById('lightbox-close');
-            var lightboxReopenElement = document.getElementById('lightbox-reopen');
-
-            // Event listener to open the lightbox on page load
-            window.addEventListener('load', function() {
-                lightboxElement.style.display = 'flex';
-            });
-
-            // Event listener to close the lightbox when clicked outside or on close button
-            lightboxElement.addEventListener('click', function(e) {
-                if (e.target === lightboxElement || e.target === lightboxCloseElement) {
-                    lightboxElement.style.display = 'none';
-                }
-            });
-
-            // Event listener to reopen the lightbox
-            lightboxReopenElement.addEventListener('click', function(e) {
-                e.preventDefault();
-                lightboxElement.style.display = 'flex';
-            });
-        });
-    </script>
+    <script type="text/javascript" src="/js/lightbox.js"></script>
 
     <footer class="footer">
         <p>This application is intended to be an exaggerated, but ultimately truthful way to express our frustrations at the stuff we get exposed to daily.<br/>
         Our support channels keep getting drained from actual support the more they get flooded with the same few single-GPU issues from the same bad guides over and over again, while the setup doesn't even make sense to begin with.</p>
-        <p id="lightbox-reopen"><a href="#">Click here</a> to re-open the lightbox with the full explanation.</p>
+        <p id="lightbox-reopen"><a href="#">Click here</a> to re-open the window with the full explanation.</p>
         <p>Github: <a href="https://github.com/SharkWipf/madgpt">https://github.com/SharkWipf/madgpt</p>
     </footer>
 </body>

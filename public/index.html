@@ -4,109 +4,7 @@
     <meta charset="UTF-8">
     <title>MadGPT</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        #app {
-            text-align: center;
-        }
-        .logo {
-            width: 400px; /* Changed to 4x bigger */
-            height: 400px; /* Changed to 4x bigger */
-        }
-
-        @keyframes wiggle {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-3deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(3deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        @keyframes happyWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes angryWiggle {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
-        .wiggle {
-            animation: wiggle 2s ease infinite;
-        }
-
-        .happyWiggle {
-            animation: happyWiggle 0.5s;
-        }
-
-        .angryWiggle {
-            animation: angryWiggle 0.5s;
-        }
-
-        /* Additional styles for the lightbox */
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lightbox-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-        }
-
-        .lightbox-close:before, .lightbox-close:after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 3px;
-            background-color: #333;
-        }
-
-        .lightbox-close:before {
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .lightbox-close:after {
-            transform: translate(-50%, -50%) rotate(-45deg);
-        }
-
-        .lightbox-content li {
-            margin-bottom:10px;
-        }
-
-        /* Additional styles for the footer */
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .footer a {
-            color: #666;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="app" class="container py-5">
@@ -128,6 +26,7 @@
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
         <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
             <div id="lightbox-main-content">
                 <h4>Hey there, before you click away:</h4>
                 <p>Just a quick heads up on why we (VFIO Discord) might sound a little tired when it comes to supporting single-GPU passthrough. Don't worry, no hard feelings, we just want to let you in on the challenges:</p>
@@ -154,74 +53,8 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var logos = ['logo1.png', 'logo2.png', 'logo3.png', 'logo4.png'];
-            var logoTexts = ['SHGIARE PLACK S1G•P SKIIRQ HARK', 'SHARK SHA PHOKANGE', 'SHARK SHRANAC SPAGK PA PHAGE PHI', 'PHARIG GHARK GHIAR'];
-            var logoElement = document.getElementById('logo');
-            logoWinner = Math.floor(Math.random() * logos.length);
-            logoElement.src = logos[logoWinner];
-            logoTextElement.textContent = logoTexts[logoWinner];
-
-            var questionFormElement = document.getElementById('question-form');
-            var answerElement = document.getElementById('answer');
-            var explanationElement = document.getElementById('explanation');
-            var MessageElement = document.getElementById('countMsg');
-            var submitButtonElement = document.getElementById('submit-button');
-            var lightboxElement = document.getElementById('lightbox');
-            var lightboxCloseElement = document.getElementById('lightbox-close');
-            var lightboxReopenElement = document.getElementById('lightbox-reopen');
-
-            // Event listener to open the lightbox on page load
-            window.addEventListener('load', function() {
-                lightboxElement.style.display = 'flex';
-            });
-
-            // Event listener to close the lightbox when clicked outside or on close button
-            lightboxElement.addEventListener('click', function(e) {
-                if (e.target === lightboxElement || e.target === lightboxCloseElement) {
-                    lightboxElement.style.display = 'none';
-                }
-            });
-
-            // Event listener to reopen the lightbox
-            lightboxReopenElement.addEventListener('click', function(e) {
-                e.preventDefault();
-                lightboxElement.style.display = 'flex';
-            });
-
-            questionFormElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                logoElement.classList.add('wiggle');
-                submitButtonElement.disabled = true; // Disables the submit button
-                submitButtonElement.classList.add('disabled'); // Greys out the submit button
-                var answer = answerElement.value;
-
-                fetch('/backend.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'answer=' + encodeURIComponent(answer)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    logoElement.classList.remove('wiggle');
-                    explanationElement.textContent = data.explanation;
-                    MessageElement.textContent= "This reason has been given "+data.count+" times.";
-                    explanationElement.classList.remove('d-none', 'alert-success', 'alert-danger', 'happyWiggle', 'angryWiggle');
-                    submitButtonElement.disabled = false; // Re-enables the submit button
-                    submitButtonElement.classList.remove('disabled'); // Removes the greying out of the submit button
-                    
-                    if (data.answerIsValid) {
-                        explanationElement.classList.add('alert-success', 'happyWiggle');
-                    } else {
-                        explanationElement.classList.add('alert-danger', 'angryWiggle');
-                    }
-                });
-            });
-        });
-    </script>
+    <script type="text/javascript" src="/js/lightbox.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
 
     <footer class="footer">
         <p>This application is intended to be an exaggerated, but ultimately truthful way to express our frustrations at the stuff we get exposed to daily.<br/>
